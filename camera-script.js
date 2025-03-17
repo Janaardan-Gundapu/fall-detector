@@ -5,7 +5,8 @@ let isFallTriggered = false; // Flag to trigger fall after some time
 let speedThreshold = 0.2; // Minimum speed required to detect a fall (adjust as needed)
 let movementThreshold = 3; // Minimum distance the camera must travel to be considered a fall (adjust as needed)
 
-let initialPoseDetected = false; // To ensure fall detection is triggered only after an initial pose is stable
+let stabilizationTime = 3000; // Time to wait for stabilization (in milliseconds)
+let stabilizationStartTime = Date.now(); // Start time for stabilization
 
 const video = document.getElementById('video');
 
@@ -17,16 +18,18 @@ function detectFall() {
     // Get the current Y position of the video feed (camera position)
     let currentPositionY = video.getBoundingClientRect().top; // Top position of the video element
 
+    // Only start detecting fall after the stabilization period
+    if (currentTime - stabilizationStartTime < stabilizationTime) {
+        // Skip fall detection during the stabilization period
+        requestAnimationFrame(detectFall);
+        return;
+    }
+
     // Calculate the speed of movement in the Y direction (vertical speed)
     let fallSpeed = (lastPositionY - currentPositionY) / deltaTime; // Speed (distance/time)
 
-    // Only start detecting fall after the initial pose is stable
-    if (!initialPoseDetected) {
-        initialPoseDetected = true;
-    }
-
     // Check if the fall speed and height difference meet the threshold
-    if (Math.abs(lastPositionY - currentPositionY) > movementThreshold && Math.abs(fallSpeed) > speedThreshold && !isFalling && initialPoseDetected) {
+    if (Math.abs(lastPositionY - currentPositionY) > movementThreshold && Math.abs(fallSpeed) > speedThreshold && !isFalling) {
         isFalling = true;
         alert("Fall detected!"); // Trigger fall detection alert
         console.log("Fall detected!");
