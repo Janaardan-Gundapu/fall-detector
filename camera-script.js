@@ -6,6 +6,7 @@ let fallDetectionThreshold = 200; // Threshold in px
 let speedThreshold = 0.3; // Speed in px/s
 let stabilizationTime = 1000; // 1 second for stabilization
 let stabilizedTime = 0;
+let thresholdTime = 2000; // 2 seconds to allow stabilization
 
 const video = document.getElementById('video');
 
@@ -20,6 +21,12 @@ function detectFall() {
         frameCount++;
         requestAnimationFrame(detectFall); 
         return; 
+    }
+
+    // Skip detection in the first few seconds to allow stabilization
+    if (currentTime - lastTime < thresholdTime) {
+        requestAnimationFrame(detectFall);
+        return;
     }
 
     let verticalSpeed = Math.abs(lastPositionY - currentPositionY) / deltaTime;
