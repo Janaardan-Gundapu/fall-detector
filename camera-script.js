@@ -1,11 +1,9 @@
 let lastPositionY = 0;
 let lastTime = Date.now();
 let isFalling = false;
-let isFallTriggered = false; // Flag to trigger fall after some time
-let speedThreshold = 0.2; // Minimum speed required to detect a fall (adjust as needed)
-let movementThreshold = 3; // Minimum distance the camera must travel to be considered a fall (adjust as needed)
-let stabilizationStartTime = Date.now(); // Time when camera feed starts
-let frameCount = 0; // Counter for frames to skip initial frames
+let frameCount = 0; // Counter for frames to ignore initial false positives
+let fallDetectionThreshold = 200; // Threshold to consider a fall (in px)
+let speedThreshold = 0.3; // Minimum speed required for detecting a fall (in px/s)
 
 const video = document.getElementById('video');
 
@@ -17,18 +15,18 @@ function detectFall() {
     // Get the current Y position of the video feed (camera position)
     let currentPositionY = video.getBoundingClientRect().top; // Top position of the video element
 
-    // Skip fall detection for the first few frames (to prevent false positives)
+    // Skip the first few frames for stabilization (to avoid initial false positives)
     if (frameCount < 10) {
         frameCount++;
-        requestAnimationFrame(detectFall);
-        return; // Skip fall detection for the first 10 frames
+        requestAnimationFrame(detectFall); // Continue detecting after skipping frames
+        return; // Skip fall detection in the first few frames
     }
 
-    // Calculate the speed of movement in the Y direction (vertical speed)
-    let fallSpeed = (lastPositionY - currentPositionY) / deltaTime; // Speed (distance/time)
+    // Calculate the vertical speed (movement per second)
+    let verticalSpeed = Math.abs(lastPositionY - currentPositionY) / deltaTime;
 
-    // Check if the fall speed and height difference meet the threshold
-    if (Math.abs(lastPositionY - currentPositionY) > movementThreshold && Math.abs(fallSpeed) > speedThreshold && !isFalling) {
+    // Check if the camera position has changed significantly and is moving fast enough to be considered a fall
+    if (Math.abs(lastPositionY - currentPositionY) > fallDetectionThreshold && verticalSpeed > speedThreshold && !isFalling) {
         isFalling = true;
         alert("Fall detected!"); // Trigger fall detection alert
         console.log("Fall detected!");
@@ -43,7 +41,7 @@ function detectFall() {
 }
 
 // Start detecting falls when the video feed starts
-video.addEventListener('play', function() {
+video.addEventListener('play', function () {
     detectFall();
 });
 
@@ -53,12 +51,12 @@ navigator.mediaDevices.getUserMedia({
         facingMode: 'environment'
     }
 })
-.then(function(stream) {
-    // Get the video element and set the stream as the source
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-})
-.catch(function(error) {
-    console.error('Error accessing webcam: ', error);
-    alert('Error accessing webcam: ' + error.message);  // Display error to user
-});
+    .then(function (stream) {
+        // Get the video element and set the stream as the source
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+    })
+    .catch(function (error) {
+        console.error('Error accessing webcam: ', error);
+        alert('Error accessing webcam: ' + error.message);  // Display error to user
+    });
