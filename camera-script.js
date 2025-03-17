@@ -1,6 +1,9 @@
 let lastPositionY = 0;
 let lastTime = Date.now();
 let isFalling = false;
+let isFallTriggered = false; // Flag to trigger fall after some time
+let speedThreshold = 0.2; // Minimum speed required to detect a fall (adjust as needed)
+let movementThreshold = 3; // Minimum distance the camera must travel to be considered a fall (adjust as needed)
 
 const video = document.getElementById('video');
 
@@ -13,19 +16,21 @@ function detectFall() {
     let currentPositionY = video.getBoundingClientRect().top; // Top position of the video element
 
     // Calculate the speed of movement in the Y direction (vertical speed)
-    let fallSpeed = (lastPositionY - currentPositionY) / deltaTime;
+    let fallSpeed = (lastPositionY - currentPositionY) / deltaTime; // Speed (distance/time)
 
-    // If the speed is above a certain threshold, and there's a significant drop, trigger a fall detection
-    if (fallSpeed > 1.0 && lastPositionY - currentPositionY > 2.0 && !isFalling) {
+    // Check if the fall speed and height difference meet the threshold
+    if (Math.abs(lastPositionY - currentPositionY) > movementThreshold && Math.abs(fallSpeed) > speedThreshold && !isFalling) {
         isFalling = true;
         alert("Fall detected!"); // Trigger fall detection alert
+        console.log("Fall detected!");
     }
 
     // Update last position and time for the next check
     lastPositionY = currentPositionY;
     lastTime = currentTime;
 
-    requestAnimationFrame(detectFall); // Keep calling detectFall to track in real time
+    // Call detectFall every frame
+    requestAnimationFrame(detectFall);
 }
 
 // Start detecting falls when the video feed starts
