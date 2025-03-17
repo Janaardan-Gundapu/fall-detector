@@ -37,3 +37,19 @@ function detectFall() {
 video.addEventListener('play', function() {
     detectFall();
 });
+
+// Access the back camera (rear camera)
+navigator.mediaDevices.getUserMedia({
+    video: {
+        facingMode: { exact: "environment" }  // Use the rear camera
+    }
+})
+.then(function(stream) {
+    // Get the video element and set the stream as the source
+    const video = document.getElementById('video');
+    video.srcObject = stream;
+})
+.catch(function(error) {
+    console.error('Error accessing webcam: ', error);
+    alert('Error accessing webcam: ' + error.message);  // Display error to user
+});
