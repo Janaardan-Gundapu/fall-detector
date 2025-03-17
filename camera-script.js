@@ -17,16 +17,17 @@ function detectFall() {
 
     let currentPositionY = video.getBoundingClientRect().top; // Top position of the video element
 
+    // Skip detection during the initial frames to allow stabilization
     if (frameCount < 10) {
         frameCount++;
-        requestAnimationFrame(detectFall); 
-        return; 
+        requestAnimationFrame(detectFall);
+        return; // Skip fall detection in the first few frames
     }
 
     // Skip detection in the first few seconds to allow stabilization
     if (currentTime - lastTime < thresholdTime) {
         requestAnimationFrame(detectFall);
-        return;
+        return; // Skip fall detection in the first few seconds
     }
 
     let verticalSpeed = Math.abs(lastPositionY - currentPositionY) / deltaTime;
@@ -55,6 +56,9 @@ function detectFall() {
 
 // Start detection when the video feed starts
 video.addEventListener('play', function () {
+    // Initialize lastPositionY and lastTime for proper calculations
+    lastPositionY = video.getBoundingClientRect().top;
+    lastTime = Date.now();
     detectFall();
 });
 
@@ -67,5 +71,5 @@ navigator.mediaDevices.getUserMedia({
     })
     .catch(function (error) {
         console.error('Error accessing webcam: ', error);
-        alert('Error accessing webcam: ' + error.message); 
+        alert('Error accessing webcam: ' + error.message);
     });
