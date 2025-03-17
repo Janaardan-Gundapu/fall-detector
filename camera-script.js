@@ -1,9 +1,10 @@
 let lastPositionY = 0;
 let lastTime = Date.now();
 let isFalling = false;
-let frameCount = 0; // Counter for frames to ignore initial false positives
+let frameCount = 0; // Counter for frames to skip initial false positives
 let fallDetectionThreshold = 200; // Threshold to consider a fall (in px)
 let speedThreshold = 0.3; // Minimum speed required for detecting a fall (in px/s)
+let stabilizationTime = 1000; // Stabilization time in ms (1 second)
 
 const video = document.getElementById('video');
 
