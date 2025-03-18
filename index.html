@@ -1,32 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fall Detection - Camera</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file for styling -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>  <!-- TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script> <!-- Pose Detection -->
-</head>
-<body>
-    <h1>Fall Detection - Camera</h1>
+    <title>Fall & Sound Alert System</title>
+  </head>
+  <body>
+    <h1>Fall & Sound Alert System</h1>
+    <!-- Video element to display camera feed -->
+    <video id="video" width="640" height="480" autoplay muted></video>
     
-    <!-- Video feed to display camera -->
-    <video id="video" width="640" height="480" autoplay></video>
-
-    <script src="camera-script.js"></script> <!-- Link to the JavaScript file for fall detection -->
-    
-    <script>
-        // Access the camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function(stream) {
-                // Get the video element and set the stream as the source
-                const video = document.getElementById('video');
-                video.srcObject = stream;
-            })
-            .catch(function(error) {
-                console.error('Error accessing webcam: ', error);
-            });
-    </script>
-</body>
+    <!-- Include our main JavaScript file -->
+    <script src="main.js"></script>
+  </body>
 </html>
