@@ -3,13 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <title>Fall & Sound Alert System</title>
+    <!-- Load TensorFlow.js and PoseNet from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet@2.2.1"></script>
   </head>
   <body>
     <h1>Fall & Sound Alert System</h1>
-    <!-- Video element to display camera feed -->
+    <!-- Video element to display the camera feed -->
     <video id="video" width="640" height="480" autoplay muted></video>
-    
-    <!-- Include our main JavaScript file -->
+    <!-- A status area for alerts or messages -->
+    <div id="status"></div>
+    <!-- Include our client‑side script -->
     <script src="main.js"></script>
   </body>
 </html>
